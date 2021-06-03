@@ -14,17 +14,57 @@ This example will use the following paths and variables:
 * `10.10.1.1` for the DNS server
 * `vpn.domain.local` for the public domain name
 
-### Docker image build
+### 1. Docker image build
 
       docker build -t <image_name> .
 
-### OAuth client configuration
+### 2. OAuth client configuration
 
 Keycloak will be used as an example. 
 
-TODO
+1.  Create a new Role at Keycloak, e.g. `demo-pam-authentication`. (Assuming the server is at
+    `https://keycloak.example.com`)
 
-### OpenVPN server configuration
+2.  Create a new Client Scope, e.g. `pam_roles`:
+    * Protocol: `openid-connect`
+    * Display On Consent Screen: `OFF`
+    * Include in Token Scope: `ON`
+    * Mapper:
+        * Name: e.g. `pam roles`
+        * Mapper Type: `User Realm Role`
+        * Multivalued: `ON`
+        * Token Claim Name: `pam_roles` (the name of the Client Scope)
+        * Claim JSON Type: `String`
+        * Add to ID token: `OFF`
+        * Add to access token: `ON`
+        * Add to userinfo: `OFF`
+    * Scope:
+        * Effective Roles: `demo-pam-authentication` (the name of the Role)
+
+3.  Create a new Keycloak Client:
+    * Client ID: `demo-pam` (or whatever valid client name)
+    * Enabled: `ON`
+    * Consent Required: `OFF`
+    * Client Protocol: `openid-connect`
+    * Access Type: `confidential`
+    * Standard Flow Enabled: `ON`
+    * Implicit Flow Enabled: `OFF`
+    * Direct Access Grants Enabled: `ON`
+    * Service Accounts Enabled: `OFF`
+    * Authorization Enabled: `OFF`
+    * Valid Redirect URIs: `urn:ietf:wg:oauth:2.0:oob`
+    * Fine Grain OpenID Connect Configuration:
+        * Access Token Signature Algorithm: e.g. `RS256`
+    * Client Scopes:
+        * Assigned Default Client Scopes: `pam_roles`
+    * Scope:
+        * Full Scope Allowed: `OFF`
+        * Effective Roles: `demo-pam-authentication`
+       
+4.  Assign the role `demo-pam-authentication` to relevant users. A common practice is to assign the role to a Group,
+    then make the relevant users join that group.
+
+### 3. OpenVPN server configuration
 
 * Initialize the OpenVPN server configuration.
       
@@ -34,13 +74,17 @@ TODO
 
       docker run -v /srv/openvpn:/etc/openvpn --rm -it <image_name> ovpn_initpki nopass
 
-### OpenVPN client configuration
+### 4. OpenVPN client configuration
 
 Get the OpenVPN client configuration.
 
       docker run -v /srv/openvpn:/etc/openvpn --rm <image_name> ovpn_getclient > client.ovpn
 
-## Internals
+### 5. OpenVPN server launch
+
+TODO
+
+## Remarks
 
 ### Authentication & Encryption
 
