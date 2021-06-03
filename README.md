@@ -1,4 +1,4 @@
-# OpenVPN for Docker with OAuth authentication support
+# OpenVPN + OAuth for Docker
 
 Based on [kylemanna/docker-openvpn](https://github.com/kylemanna/docker-openvpn) & [zhaow-de/pam-keycloak-oidc](https://github.com/zhaow-de/pam-keycloak-oidc). 
 Additional documentation can be found on the respective repositories.
