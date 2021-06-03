@@ -91,7 +91,6 @@ usage() {
     echo "                 [-s SERVER_SUBNET]"
     echo
     echo "optional arguments:"
-    echo " -2    Enable two factor authentication using Google Authenticator."
     echo " -a    Authenticate  packets with HMAC using the given message digest algorithm (auth)."
     echo " -b    Disable 'push block-outside-dns'"
     echo " -c    Enable client-to-client option"
@@ -172,7 +171,7 @@ OVPN_TLS_CIPHER=''
 [ -r "$OVPN_ENV" ] && source "$OVPN_ENV"
 
 # Parse arguments
-while getopts ":a:e:E:C:T:r:s:du:bcp:n:k:DNm:f:tz2" opt; do
+while getopts ":a:e:E:C:T:r:s:du:bcp:n:k:DNm:f:tz" opt; do
     case $opt in
         a)
             OVPN_AUTH="$OPTARG"
@@ -289,7 +288,7 @@ set +u
 [ -z "$OVPN_PROTO" ] && OVPN_PROTO=udp
 [ -z "$OVPN_PORT" ] && OVPN_PORT=1194
 set -u
-[ "${#OVPN_ROUTES[@]}" == "0" ] && [ "$OVPN_DEFROUTE" == "1" ] && OVPN_ROUTES+=("192.168.254.0/24")
+[ "${#OVPN_ROUTES[@]}" == "0" ] && [ "$OVPN_DEFROUTE" == "1" ]
 
 # Preserve config
 if [ -f "$OVPN_ENV" ]; then
@@ -320,22 +319,31 @@ fi
 cat > "$conf" <<EOF
 server $(getroute $OVPN_SERVER)
 verb 3
+
+# Keys & Certificates
 key $EASYRSA_PKI/private/${OVPN_CN}.key
 ca $EASYRSA_PKI/ca.crt
 cert $EASYRSA_PKI/issued/${OVPN_CN}.crt
 dh $EASYRSA_PKI/dh.pem
 tls-auth $EASYRSA_PKI/ta.key
 key-direction 0
+
+# Authentication
+plugin /usr/lib/openvpn/plugins/openvpn-plugin-auth-pam.so openvpn-keycloak-oidc
+reneg-sec 0
+username-as-common-name
+verify-client-cert none
+
+# Connection
 keepalive $OVPN_KEEPALIVE
 persist-key
 persist-tun
-
 proto $OVPN_PROTO
-# Rely on Docker to do port mapping, internally always 1194
-port 1194
+port 1194 # Rely on Docker to do port mapping, internally always 1194
 dev $OVPN_DEVICE$OVPN_DEVICEN
 status /tmp/openvpn-status.log
 
+# System
 user nobody
 group nogroup
 EOF
@@ -380,13 +388,6 @@ done
 
 echo -e "\n### Push Configurations Below" >> "$conf"
 cat $TMP_PUSH_CONFIGFILE >> "$conf"
-
-# Append optional OTP authentication support
-if [ -n "${OVPN_OTP_AUTH:-}" ]; then
-    echo -e "\n\n# Enable OTP+PAM for user authentication" >> "$conf"
-    echo "plugin /usr/lib/openvpn/plugins/openvpn-plugin-auth-pam.so openvpn" >> "$conf"
-    echo "reneg-sec 0" >> "$conf"
-fi
 
 # Append extra server configurations
 if [ ${#OVPN_EXTRA_SERVER_CONFIG[@]} -gt 0 ]; then
