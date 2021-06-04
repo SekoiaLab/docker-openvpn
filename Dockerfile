@@ -1,6 +1,7 @@
 # Original credit: https://github.com/jpetazzo/dockvpn, https://github.com/kylemanna/docker-openvpn
 FROM alpine:latest
 LABEL maintainer="Théo Lépine <theo.lepine@sekoia.fr"
+ARG PAM_KEYCLOAK_OIDC_VERSION=r1.1.6
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/repositories && \
     apk add --update openvpn iptables bash easy-rsa openvpn-auth-pam libqrencode && \
@@ -9,7 +10,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/reposi
 
 # PAM module Keycloak OIDC: https://github.com/zhaow-de/pam-keycloak-oidc
 RUN mkdir /opt/pam-keycloak-oidc
-RUN wget -q -O /opt/pam-keycloak-oidc/pam-keycloak-oidc https://github.com/SekoiaLab/pam-keycloak-oidc/releases/download/refs%2Fheads%2Fmain/pam-keycloak-oidc.linux-amd64 && \
+RUN wget -q -O /opt/pam-keycloak-oidc/pam-keycloak-oidc https://github.com/SekoiaLab/pam-keycloak-oidc/releases/download/$PAM_KEYCLOAK_OIDC_VERSION/pam-keycloak-oidc.linux-amd64 && \
     chmod 755 /opt/pam-keycloak-oidc/pam-keycloak-oidc
 
 # Script for Keycloak/OIDC module configuration generation
