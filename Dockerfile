@@ -1,5 +1,5 @@
 # Original credit: https://github.com/jpetazzo/dockvpn, https://github.com/kylemanna/docker-openvpn
-FROM alpine:latest
+FROM golang:alpine
 LABEL maintainer="Théo Lépine <theo.lepine@sekoia.fr"
 ARG PAM_KEYCLOAK_OIDC_VERSION=r1.1.6
 
