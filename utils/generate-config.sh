@@ -15,4 +15,5 @@ endpoint-token-url="$OIDC_ENDPOINT_TOKEN_URL"
 username-format="%s"
 access-token-signing-method="${OIDC_SIGNING_METHOD:-RS256}"
 xor-key="${OIDC_XOR_KEY:-supersecret}" 
+insecure-mode=${INSECURE_MODE:-false}
 EOF
