@@ -329,7 +329,7 @@ tls-auth $EASYRSA_PKI/ta.key
 key-direction 0
 
 # Authentication
-plugin /usr/lib/openvpn/plugins/openvpn-plugin-auth-pam.so openvpn-keycloak-oidc
+plugin /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so openvpn-keycloak-oidc
 reneg-sec 0
 username-as-common-name
 verify-client-cert none
