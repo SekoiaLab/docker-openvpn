@@ -344,8 +344,8 @@ dev $OVPN_DEVICE$OVPN_DEVICEN
 status /tmp/openvpn-status.log
 
 # System
-user nobody
-group nogroup
+user root
+group root
 EOF
 
 if [ "${OVPN_DISABLE_PUSH_BLOCK_DNS}" == "1" ]; then

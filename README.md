@@ -1,4 +1,4 @@
-# OpenVPN + OAuth for Docker
+# OpenVPN + OIDC for Docker
 
 Based on [kylemanna/docker-openvpn](https://github.com/kylemanna/docker-openvpn) & [zhaow-de/pam-keycloak-oidc](https://github.com/zhaow-de/pam-keycloak-oidc). 
 Additional documentation can be found on the respective repositories.
@@ -82,17 +82,17 @@ Get the OpenVPN client configuration.
 
 ### 5. OpenVPN server launch
 
-TODO
+      docker run -v /srv/openvpn:/etc/openvpn <image_name>
 
 ## Remarks
 
 ### Authentication & Encryption
 
-* This image is designed to use solely an OAuth authentication and does not provide certificates or keys for clients. 
+* This image is designed to use solely an OIDC authentication and does not provide certificates or keys for clients. 
 * The server identity is checked with the CA certificate hardcoded in the client configuration. 
 * TLS keys are used to negotiate a secured channel.
 
-### OAuth
+### OIDC
 
-* The OAuth requests are made through a PAM module.
-* A modified version of [zhaow-de/pam-keycloak-oidc](https://github.com/zhaow-de/pam-keycloak-oidc) is used.
+* The OIDC requests are made through a PAM module.
+* A modified version of [zhaow-de/pam-keycloak-oidc](https://github.com/zhaow-de/pam-keycloak-oidc) is used, available at [SekoiaLab/pam-keycloak-oidc](https://github.com/SekoiaLab/pam-keycloak-oidc).
