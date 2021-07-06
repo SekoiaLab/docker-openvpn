@@ -1,2 +1,4 @@
+account	required			pam_permit.so
 auth	[success=1 default=ignore]	pam_exec.so	expose_authtok	log=/var/log/pam-keycloak-oidc.log	/opt/pam-keycloak-oidc/pam-keycloak-oidc
-account sufficient pam_permit.so
+auth	requisite			pam_deny.so
+auth	required			pam_permit.so
