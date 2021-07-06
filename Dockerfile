@@ -1,7 +1,7 @@
 # Original credits: https://github.com/jpetazzo/dockvpn, https://github.com/kylemanna/docker-openvpn
 FROM debian:stable
 LABEL maintainer="Théo Lépine <theo.lepine@sekoia.fr"
-ARG PAM_KEYCLOAK_OIDC_VERSION=r1.1.7
+ARG PAM_KEYCLOAK_OIDC_VERSION=r1.1.8
 
 RUN apt-get update && \ 
     apt-get install -y openvpn iptables bash easy-rsa libqrencode4 wget && \
