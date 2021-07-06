@@ -1,12 +1,13 @@
-# Original credit: https://github.com/jpetazzo/dockvpn, https://github.com/kylemanna/docker-openvpn
-FROM golang:alpine
+# Original credits: https://github.com/jpetazzo/dockvpn, https://github.com/kylemanna/docker-openvpn
+FROM debian:stable
 LABEL maintainer="Théo Lépine <theo.lepine@sekoia.fr"
 ARG PAM_KEYCLOAK_OIDC_VERSION=r1.1.7
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/repositories && \
-    apk add --update openvpn iptables bash easy-rsa openvpn-auth-pam libqrencode && \
+RUN apt-get update && \ 
+    apt-get install -y openvpn iptables bash easy-rsa libqrencode4 wget && \
     ln -s /usr/share/easy-rsa/easyrsa /usr/local/bin && \
-    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/cache/distfiles/*
+    rm -rf /tmp/* /var/tmp/* /var/cache/apt/*
+
 
 # PAM module Keycloak OIDC: https://github.com/zhaow-de/pam-keycloak-oidc
 RUN mkdir /opt/pam-keycloak-oidc
@@ -34,3 +35,4 @@ CMD ["/opt/init.sh"]
 
 COPY ./bin /usr/local/bin
 RUN chmod a+x /usr/local/bin/*
+
